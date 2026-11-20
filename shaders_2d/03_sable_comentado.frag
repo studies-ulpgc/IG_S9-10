@@ -29,7 +29,7 @@ void main() {
     p = rot(angulo) * p;
     p.y += 0.35;
 
-    // 2. Hoja láser y distorsión de plasma
+    // 2. Hoja láser y de plasma
     float plasmaWave = sin(p.y * 35.0 - u_time * 45.0) * 0.0025 * smoothstep(0.0, 0.1, p.y);
     float yHoja = clamp(p.y, 0.0, 1.15);
     float distHoja = length(p - vec2(0.0, yHoja));

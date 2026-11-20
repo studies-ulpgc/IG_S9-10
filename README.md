@@ -46,7 +46,7 @@ En esta práctica se trabaja la programación de shaders en **OpenGL Shading Lan
 1. **Shaders 2D (*Tiny Code* $\le$ 512 bytes):** Creación de efectos visuales animados en [*The Book of Shaders*](https://editor.thebookofshaders.com/) usando únicamente fórmulas matemáticas (sin imágenes ni texturas externas) y comprimiendo el código por debajo de los 512 bytes.
 2. **Shaders 3D en el Sistema Galáctico Star Wars:** Sustitución de los materiales estáticos de la escena 3D anterior por materiales programados en GLSL (`THREE.ShaderMaterial`) para dar movimiento real a la lava de Mustafar, al plasma del Sol, al relieve helado de Hoth y al escudo de la Estrella de la Muerte.
 
-- **Repositorio del Proyecto en GitHub:** [studies-ulpgc/IG_S9-10](https://github.com/studies-ulpgc/IG_S9-10)
+- **Repositorio del Proyecto de Star Wars en GitHub:** [studies-ulpgc/IG_S6-7](https://github.com/studies-ulpgc/IG_S6-7)
 - **Entorno CodeSandbox del Proyecto:** [Probar Proyecto en Sandbox](https://codesandbox.io/p/sandbox/github/studies-ulpgc/IG_S9-10)
 
 ---
@@ -59,9 +59,9 @@ Todos los *shaders* 2D están pensados para ejecutarse en el editor web de **The
 
 | Nº | Shader | Efecto Visual | Interactividad | Tamaño *Tiny Code* | Archivos Fuente |
 | :-: | :--- | :--- | :--- | :---: | :--- |
-| **01** | **Llama Estilizada** | Llama individual ondulante con gradiente térmico. | El eje Y del ratón regula la altura de la llama. | **510 bytes** | [`Comentado`](./shaders_2d/01_llama_comentado.frag) · [`Tiny Code`](./shaders_2d/01_llama_tiny.frag) |
+| **01** | **Llama Estilizada** | Llama individual ondulante con gradiente térmico. | El ratón interfiere con la llama. | **510 bytes** | [`Comentado`](./shaders_2d/01_llama_comentado.frag) · [`Tiny Code`](./shaders_2d/01_llama_tiny.frag) |
 | **02** | **Fuego Realista (FBM)** | Frente de fuego turbulento con ruido fractal de 4 octavas. | El cursor actúa como un foco de calor que aviva las llamas. | **507 bytes** | [`Comentado`](./shaders_2d/02_fuego_fbm_comentado.frag) · [`Tiny Code`](./shaders_2d/02_fuego_fbm_tiny.frag) |
-| **03** | **Sable Láser (v1)** | Sable láser con empuñadura metálica, rotación y resplandor. | Rotación con eje X y cambio de color (Azul/Rojo) con eje Y. | **511 bytes** | [`Comentado`](./shaders_2d/03_sable_comentado.frag) · [`Tiny Code`](./shaders_2d/03_sable_tiny.frag) |
+| **03** | **Sable Láser (v1)** | Sable láser con empuñadura metálica, rotación y resplandor. | Rotación sobre el eje X y cambio de color (Azul/Rojo) con eje Y. | **511 bytes** | [`Comentado`](./shaders_2d/03_sable_comentado.frag) · [`Tiny Code`](./shaders_2d/03_sable_tiny.frag) |
 | **03b** | **Sable Láser (v2 Autónoma)** | Variante *Tiny Code* sin ratón con ciclo automático de colores Kyber. | Automática con `u_time` (Azul $\rightarrow$ Verde $\rightarrow$ Morado $\rightarrow$ Rojo). | **510 bytes** | [`Tiny Code v2`](./shaders_2d/03_sable_tiny_version2.frag) |
 
 ---
@@ -69,7 +69,7 @@ Todos los *shaders* 2D están pensados para ejecutarse en el editor web de **The
 ### 2.2. Shader 1: Llama Estilizada Interactiva
 
 #### Versión Completa Comentada ([`01_llama_comentado.frag`](./shaders_2d/01_llama_comentado.frag))
-Modela la silueta de una llama orgánica mediante ondas sinusoidales combinadas con un campo de distancia 2D. A medida que la coordenada vertical sube, la llama se estrecha y oscila lateralmente, aplicando un degradado de color desde rojo oscuro hasta amarillo brillante en el núcleo. Al mover el ratón en vertical (`u_mouse.y`), la llama crece o se encoge.
+Modela la silueta de una llama orgánica mediante ondas sinusoidales combinadas con un campo de distancia 2D. A medida que la coordenada vertical sube, la llama se estrecha y oscila lateralmente, aplicando un degradado de color desde rojo oscuro hasta amarillo brillante en el núcleo. Al mover el ratón en vertical (`u_mouse.y`), la llama es empujada.
 
 <div align="center">
   <a href="./readme_media/shaders2d/01_llama_full.gif">
@@ -80,7 +80,7 @@ Modela la silueta de una llama orgánica mediante ondas sinusoidales combinadas 
 </div>
 
 #### Versión *Tiny Code* — 510 bytes ([`01_llama_tiny.frag`](./shaders_2d/01_llama_tiny.frag))
-Al comprimir el código eliminando comentarios, espacios y variables intermedias, se consigue exactamente la misma forma, movimiento e interacción con el ratón dentro del límite de 512 bytes.
+Al comprimir el código eliminando comentarios, espacios y variables intermedias, se consigue una forma y movimiento similar dentro del límite de 512 bytes, sacrificando los puntos blancos, por ejemplo.
 
 <div align="center">
   <a href="./readme_media/shaders2d/01_llama_tiny.gif">
@@ -106,7 +106,7 @@ A diferencia del primer shader, aquí se genera un muro de fuego turbulento cont
 </div>
 
 #### Versión *Tiny Code* — 507 bytes ([`02_fuego_fbm_tiny.frag`](./shaders_2d/02_fuego_fbm_tiny.frag))
-Compactando el bucle de ruido fractal y la paleta de colores exponencial en nombres de función de una sola letra, el efecto completo y el foco térmico del cursor se mantienen intactos en 507 bytes.
+Compactando el bucle de ruido fractal y la paleta de colores exponencial en nombres de función de una sola letra y el efecto completo se mantienen intactos en 507 bytes, pero no el cursor.
 
 <div align="center">
   <a href="./readme_media/shaders2d/02_fuego_tiny.gif">
@@ -121,7 +121,7 @@ Compactando el bucle de ruido fractal y la paleta de colores exponencial en nomb
 ### 2.4. Shader 3: Sable Láser (Interactivo y Versión Autónoma)
 
 #### Versión Completa Comentada ([`03_sable_comentado.frag`](./shaders_2d/03_sable_comentado.frag))
-Conecta la parte 2D con la temática *Star Wars* del proyecto 3D. Utiliza una matriz de rotación 2D y funciones de distancia a segmentos para dibujar por separado la hoja luminosa y la empuñadura metálica con relieve cilíndrico y anillas. Al mover el ratón cambia tanto la inclinación como el color del cristal Kyber (de Azul Jedi a Rojo Sith).
+Conecta la parte 2D con la temática *Star Wars* del proyecto 3D. Utiliza una matriz de rotación 2D y funciones de distancia a segmentos para dibujar por separado la hoja luminosa y la empuñadura metálica con relieve cilíndrico y anillas. Al mover el ratón cambia el color del cristal Kyber (de Azul Jedi a Rojo Sith).
 
 <div align="center">
   <a href="./readme_media/shaders2d/03_sable_full.gif">
@@ -132,7 +132,7 @@ Conecta la parte 2D con la temática *Star Wars* del proyecto 3D. Utiliza una ma
 </div>
 
 #### Versión *Tiny Code* Interactiva — 511 bytes ([`03_sable_tiny.frag`](./shaders_2d/03_sable_tiny.frag))
-Primera versión comprimida que mantiene el control por ratón (`u_mouse`), el balanceo pendular, la empuñadura con bandas y el doble resplandor exponencial de la hoja en 511 bytes.
+Primera versión comprimida que mantiene el control por ratón (`u_mouse`), la empuñadura con bandas y el doble resplandor exponencial de la hoja en 511 bytes.
 
 <div align="center">
   <a href="./readme_media/shaders2d/03_sable_tiny.gif">
@@ -143,7 +143,7 @@ Primera versión comprimida que mantiene el control por ratón (`u_mouse`), el b
 </div>
 
 #### Versión *Tiny Code* Autónoma (Sin Ratón) — 510 bytes ([`03_sable_tiny_version2.frag`](./shaders_2d/03_sable_tiny_version2.frag))
-Como ampliación solicitada tras la revisión en clase, se creó esta segunda versión *Tiny Code* prescindiendo de `u_mouse`. Los bytes ahorrados al quitar el ratón se aprovecharon para que el sable cambie de color automáticamente con `u_time` (recorriendo azul, verde, morado y rojo) y para añadir reflejos del láser sobre el metal de la empuñadura.
+Como ampliación solicitada tras la revisión en clase, se creó esta segunda versión *Tiny Code* prescindiendo de `u_mouse`. Los bytes ahorrados al quitar el ratón se aprovecharon para que el sable cambie de color automáticamente con `u_time` (recorriendo azul, verde, morado y rojo).
 
 <div align="center">
   <a href="./readme_media/shaders2d/03_sable_tiny_version2.gif">
@@ -226,7 +226,7 @@ En [`src/shaders/planetShaders.js`](./src/shaders/planetShaders.js) se han cread
 
 Se detallan ejemplos del uso de modelos de IA (**Google Gemini**) como asistente de soporte técnico durante la práctica:
 
-- **Desarrollo de shaders 2D (*Tiny Code*) y shaders planetarios 3D en GLSL:** [Consulta sobre shaders GLSL y optimización de bytes](<!-- PEGA AQUÍ EL ENLACE DE TU CONVERSACIÓN DE GEMINI -->)
+- **Desarrollo de shaders 2D (*Tiny Code*) y shaders planetarios 3D en GLSL:** [Consulta sobre shaders GLSL, dudas por errores y optimización de bytes](https://share.gemini.google/fPBsyKpwZdS5)
 - **Asistencia técnica:** Depuración de expresiones matemáticas en WebGL/GLSL, resolución de costuras en esferas 3D y maquetación de la documentación.
 
 ### 5.3. Autora

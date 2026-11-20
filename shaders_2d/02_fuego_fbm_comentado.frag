@@ -37,7 +37,7 @@ void main() {
     float aspect = u_resolution.x / u_resolution.y;
     vec2 p = vec2(uv.x * aspect, uv.y);
 
-    // Coordenadas turbulentas ascendentes (FBM + Domain Warping)
+    // Coordenadas turbulentas ascendentes
     vec2 q = p * vec2(4.0, 3.0) - vec2(0.0, u_time * 1.8);
     float turb = fbm(q + vec2(0.0, fbm(q * 1.5)));
 
