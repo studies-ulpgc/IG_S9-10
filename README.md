@@ -28,6 +28,11 @@
 
 1. [Resumen y Motivación de la Práctica](#1-resumen-y-motivaci%C3%B3n-de-la-pr%C3%A1ctica)
 2. [Parte I: Shaders 2D en GLSL (*Tiny Code* $\le$ 512 Bytes)](#2-parte-i-shaders-2d-en-glsl-tiny-code--512-bytes)
+   - [2.1. Resumen Comparativo y Conteo de Bytes](#21-resumen-comparativo-y-conteo-de-bytes)
+   - [2.2. Shader 1: Llama Estilizada Interactiva](#22-shader-1-llama-estilizada-interactiva)
+   - [2.3. Shader 2: Fuego Realista Procedural (FBM y *Domain Warping*)](#23-shader-2-fuego-realista-procedural-fbm-y-domain-warping)
+   - [2.4. Shader 3: Sable Láser (Interactivo y Versión Autónoma)](#24-shader-3-sable-l%C3%A1ser-interactivo-y-versi%C3%B3n-aut%C3%B3noma)
+   - [2.5. Técnicas de Compresión (*Tiny Code*)](#25-t%C3%A9cnicas-de-compresi%C3%B3n-tiny-code)
 3. [Parte II: Integración de Shaders 3D en el Sistema Galáctico Star Wars](#3-parte-ii-integraci%C3%B3n-de-shaders-3d-en-el-sistema-gal%C3%A1ctico-star-wars)
 4. [Arquitectura del Proyecto y Referencias Académicas](#4-arquitectura-del-proyecto-y-referencias-acad%C3%A9micas)
 5. [Bibliografía, Fuentes y Colaboradores](#5-bibliograf%C3%ADa-fuentes-y-colaboradores)
@@ -36,94 +41,139 @@
 
 ## 1. Resumen y Motivación de la Práctica
 
-Este proyecto explora la programación directa de shaders en **OpenGL Shading Language (GLSL)** dividida en dos bloques:
+En esta práctica se trabaja la programación de shaders en **OpenGL Shading Language (GLSL)** dividida en dos partes:
 
-1. **Síntesis Procedural 2D (*Tiny Code* $\le$ 512 bytes):** Tres *fragment shaders* ejecutables en [*The Book of Shaders*](https://editor.thebookofshaders.com/) sin texturas externas. El objetivo es sintetizar fenómenos dinámicos (fuego estilizado, combustión turbulenta con FBM y plasma láser) mediante funciones matemáticas puras respetando un presupuesto estricto de 512 bytes.
-2. **Renderizado Procedural 3D en Three.js:** Sustitución de materiales estáticos por materiales programables (`THREE.ShaderMaterial`) dentro de la escena interactiva del **Sistema Galáctico de Star Wars**, combinando deformación geométrica en *Vertex Shaders* e iluminación procedural sin costuras UV en *Fragment Shaders*.
+1. **Shaders 2D (*Tiny Code* $\le$ 512 bytes):** Creación de efectos visuales animados en [*The Book of Shaders*](https://editor.thebookofshaders.com/) usando únicamente fórmulas matemáticas (sin imágenes ni texturas externas) y comprimiendo el código por debajo de los 512 bytes.
+2. **Shaders 3D en el Sistema Galáctico Star Wars:** Sustitución de los materiales estáticos de la escena 3D anterior por materiales programados en GLSL (`THREE.ShaderMaterial`) para dar movimiento real a la lava de Mustafar, al plasma del Sol, al relieve helado de Hoth y al escudo de la Estrella de la Muerte.
+
+- **Repositorio del Proyecto en GitHub:** [studies-ulpgc/IG_S9-10](https://github.com/studies-ulpgc/IG_S9-10)
+- **Entorno CodeSandbox del Proyecto:** [Probar Proyecto en Sandbox](https://codesandbox.io/p/sandbox/github/studies-ulpgc/IG_S9-10)
 
 ---
 
 ## 2. Parte I: Shaders 2D en GLSL (*Tiny Code* $\le$ 512 Bytes)
 
-Todos los *shaders* utilizan los *uniforms* estándar `u_resolution`, `u_time` y `u_mouse`. En el directorio [`shaders_2d/`](./shaders_2d/) se adjuntan tanto las versiones completas comentadas como las versiones minificadas ($\le 512$ bytes).
+Todos los *shaders* 2D están pensados para ejecutarse en el editor web de **The Book of Shaders**. En la carpeta [`shaders_2d/`](./shaders_2d/) se incluyen tanto las versiones completas comentadas como las versiones reducidas ($\le 512$ bytes).
 
 ### 2.1. Resumen Comparativo y Conteo de Bytes
 
-| Nº | Shader | Técnicas Principales | Interactividad (`u_mouse`) | Tamaño *Tiny Code* | Código Fuente |
+| Nº | Shader | Efecto Visual | Interactividad | Tamaño *Tiny Code* | Archivos Fuente |
 | :-: | :--- | :--- | :--- | :---: | :--- |
-| **01** | **Llama Estilizada** | Campo de distancia 2D, armónicos `sin` y gradiente térmico. | Altura de la llama controlada por el eje Y. | **510 bytes** | [`Comentado`](./shaders_2d/01_llama_comentado.frag) · [`Tiny Code`](./shaders_2d/01_llama_tiny.frag) |
-| **02** | **Fuego Realista (FBM)** | *Value Noise* 2D, FBM (4 octavas), *Domain Warping* y paleta potencial. | Foco térmico radial que aviva las llamas alrededor del cursor. | **507 bytes** | [`Comentado`](./shaders_2d/02_fuego_fbm_comentado.frag) · [`Tiny Code`](./shaders_2d/02_fuego_fbm_tiny.frag) |
-| **03** | **Sable Láser** | Matriz de rotación `mat2`, SDF de cápsula (`clamp`) y halo inverso. | Rotación del sable (eje X) y cambio de cristal Azul/Rojo (eje Y). | **511 bytes** | [`Comentado`](./shaders_2d/03_sable_comentado.frag) · [`Tiny Code`](./shaders_2d/03_sable_tiny.frag) |
+| **01** | **Llama Estilizada** | Llama individual ondulante con gradiente térmico. | El eje Y del ratón regula la altura de la llama. | **510 bytes** | [`Comentado`](./shaders_2d/01_llama_comentado.frag) · [`Tiny Code`](./shaders_2d/01_llama_tiny.frag) |
+| **02** | **Fuego Realista (FBM)** | Frente de fuego turbulento con ruido fractal de 4 octavas. | El cursor actúa como un foco de calor que aviva las llamas. | **507 bytes** | [`Comentado`](./shaders_2d/02_fuego_fbm_comentado.frag) · [`Tiny Code`](./shaders_2d/02_fuego_fbm_tiny.frag) |
+| **03** | **Sable Láser (v1)** | Sable láser con empuñadura metálica, rotación y resplandor. | Rotación con eje X y cambio de color (Azul/Rojo) con eje Y. | **511 bytes** | [`Comentado`](./shaders_2d/03_sable_comentado.frag) · [`Tiny Code`](./shaders_2d/03_sable_tiny.frag) |
+| **03b** | **Sable Láser (v2 Autónoma)** | Variante *Tiny Code* sin ratón con ciclo automático de colores Kyber. | Automática con `u_time` (Azul $\rightarrow$ Verde $\rightarrow$ Morado $\rightarrow$ Rojo). | **510 bytes** | [`Tiny Code v2`](./shaders_2d/03_sable_tiny_version2.frag) |
 
 ---
 
 ### 2.2. Shader 1: Llama Estilizada Interactiva
 
-- **Código fuente:** [`01_llama_comentado.frag`](./shaders_2d/01_llama_comentado.frag) | [`01_llama_tiny.frag`](./shaders_2d/01_llama_tiny.frag) (**510 bytes**)
-- **Motivación y desarrollo:** Modelar una llama orgánica ligera mediante ecuaciones analíticas. Se normalizan las coordenadas al rango $[-1, 1]$, se modula el eje horizontal $x$ con dos ondas sinusoidales acopladas a la altura ($\sin(5y - 7t)$ y $\sin(11y - 12t)$) y se mapea el campo de distancia mediante `smoothstep` hacia una paleta de cuerpo negro (rojo $\rightarrow$ naranja $\rightarrow$ amarillo).
-- **Fidelidad tras compresión:** La versión *Tiny Code* (510 B) conserva el 100 % de la geometría, animación e interactividad vertical de la versión completa.
+#### Versión Completa Comentada ([`01_llama_comentado.frag`](./shaders_2d/01_llama_comentado.frag))
+Modela la silueta de una llama orgánica mediante ondas sinusoidales combinadas con un campo de distancia 2D. A medida que la coordenada vertical sube, la llama se estrecha y oscila lateralmente, aplicando un degradado de color desde rojo oscuro hasta amarillo brillante en el núcleo. Al mover el ratón en vertical (`u_mouse.y`), la llama crece o se encoge.
 
 <div align="center">
-  <img src="./readme_media/shaders2d/01_llama_full.gif" alt="Llama versión completa" width="480" />
-  &nbsp;&nbsp;
-  <img src="./readme_media/shaders2d/01_llama_tiny.gif" alt="Llama versión Tiny Code" width="480" />
+  <a href="./readme_media/shaders2d/01_llama_full.gif">
+    <img src="./readme_media/shaders2d/01_llama_full.gif" alt="Llama versión completa" width="480" />
+  </a>
   <br>
-  <sub><b>Izquierda:</b> Versión comentada &nbsp;|&nbsp; <b>Derecha:</b> Versión <i>Tiny Code</i> (510 bytes)</sub>
+  <sub><a href="./readme_media/shaders2d/01_llama_full.gif">Ver o descargar GIF original</a> · <a href="./shaders_2d/01_llama_comentado.frag">Ver código GLSL comentado</a></sub>
+</div>
+
+#### Versión *Tiny Code* — 510 bytes ([`01_llama_tiny.frag`](./shaders_2d/01_llama_tiny.frag))
+Al comprimir el código eliminando comentarios, espacios y variables intermedias, se consigue exactamente la misma forma, movimiento e interacción con el ratón dentro del límite de 512 bytes.
+
+<div align="center">
+  <a href="./readme_media/shaders2d/01_llama_tiny.gif">
+    <img src="./readme_media/shaders2d/01_llama_tiny.gif" alt="Llama versión Tiny Code" width="480" />
+  </a>
+  <br>
+  <sub><a href="./readme_media/shaders2d/01_llama_tiny.gif">Ver o descargar GIF original</a> · <a href="./shaders_2d/01_llama_tiny.frag">Ver código Tiny Code (510 B)</a></sub>
 </div>
 
 ---
 
 ### 2.3. Shader 2: Fuego Realista Procedural (FBM y *Domain Warping*)
 
-- **Código fuente:** [`02_fuego_fbm_comentado.frag`](./shaders_2d/02_fuego_fbm_comentado.frag) | [`02_fuego_fbm_tiny.frag`](./shaders_2d/02_fuego_fbm_tiny.frag) (**507 bytes**)
-- **Motivación y desarrollo:** A diferencia del Shader 1 (una llama individual geométrica), este shader genera un frente de combustión turbulento continuo mediante **Fractal Brownian Motion (4 octavas)** sobre *Value Noise* 2D y autodistorsión de dominio (*Domain Warping*). El puntero actúa como un **foco térmico radial** (`smoothstep(0.45, 0.0, length(p - mouse))`) que intensifica el fuego bajo el cursor sin deformar el lienzo.
-- **Fidelidad tras compresión:** Al compactar la función FBM y la paleta exponencial (`pow(fuego, 2.2)` y `pow(fuego, 4.5)`), el resultado en **507 bytes** es visualmente indistinguible del código original.
+#### Versión Completa Comentada ([`02_fuego_fbm_comentado.frag`](./shaders_2d/02_fuego_fbm_comentado.frag))
+A diferencia del primer shader, aquí se genera un muro de fuego turbulento continuo mediante ruido fractal (*Fractal Brownian Motion* de 4 octavas) que se distorsiona a sí mismo para imitar el movimiento real de las llamas al ascender. Además, el cursor actúa como un foco de calor radial que aviva el fuego allí donde se sitúe el puntero.
 
 <div align="center">
-  <img src="readme_media/shaders2d/02_fuego_full.gif" alt="Fuego FBM versión completa" width="480" />
-  &nbsp;&nbsp;
-  <img src="readme_media/shaders2d/02_fuego_tiny.gif" alt="Fuego FBM versión Tiny Code" width="480" />
+  <a href="./readme_media/shaders2d/02_fuego_full.gif">
+    <img src="./readme_media/shaders2d/02_fuego_full.gif" alt="Fuego FBM versión completa" width="480" />
+  </a>
   <br>
-  <sub><b>Izquierda:</b> Versión comentada &nbsp;|&nbsp; <b>Derecha:</b> Versión <i>Tiny Code</i> (507 bytes)</sub>
+  <sub><a href="./readme_media/shaders2d/02_fuego_full.gif">Ver o descargar GIF original</a> · <a href="./shaders_2d/02_fuego_fbm_comentado.frag">Ver código GLSL comentado</a></sub>
+</div>
+
+#### Versión *Tiny Code* — 507 bytes ([`02_fuego_fbm_tiny.frag`](./shaders_2d/02_fuego_fbm_tiny.frag))
+Compactando el bucle de ruido fractal y la paleta de colores exponencial en nombres de función de una sola letra, el efecto completo y el foco térmico del cursor se mantienen intactos en 507 bytes.
+
+<div align="center">
+  <a href="./readme_media/shaders2d/02_fuego_tiny.gif">
+    <img src="./readme_media/shaders2d/02_fuego_tiny.gif" alt="Fuego FBM versión Tiny Code" width="480" />
+  </a>
+  <br>
+  <sub><a href="./readme_media/shaders2d/02_fuego_tiny.gif">Ver o descargar GIF original</a> · <a href="./shaders_2d/02_fuego_fbm_tiny.frag">Ver código Tiny Code (507 B)</a></sub>
 </div>
 
 ---
 
-### 2.4. Shader 3: Sable Láser Interactivo con Matriz de Rotación
+### 2.4. Shader 3: Sable Láser (Interactivo y Versión Autónoma)
 
-- **Código fuente:** [`03_sable_comentado.frag`](./shaders_2d/03_sable_comentado.frag) | [`03_sable_tiny.frag`](./shaders_2d/03_sable_tiny.frag) (**511 bytes**)
-- **Motivación y desarrollo:** Conectar la parte 2D con la estética *Star Wars* aplicando transformaciones afines en el espacio del fragmento (`mat2`) y funciones de distancia con signo (SDF). La distancia euclídea a dos segmentos acotados (`clamp`) separa la hoja de plasma de la empuñadura, generando el resplandor con atenuación inversa (`0.032 / d`), parpadeo de alta frecuencia y cambio de cristal Kyber (Jedi/Sith) según la altura del ratón.
-- **Fidelidad tras compresión:** Mantiene intactos tanto el núcleo blanco incandescente como el halo cromático y la rotación en **511 bytes**.
+#### Versión Completa Comentada ([`03_sable_comentado.frag`](./shaders_2d/03_sable_comentado.frag))
+Conecta la parte 2D con la temática *Star Wars* del proyecto 3D. Utiliza una matriz de rotación 2D y funciones de distancia a segmentos para dibujar por separado la hoja luminosa y la empuñadura metálica con relieve cilíndrico y anillas. Al mover el ratón cambia tanto la inclinación como el color del cristal Kyber (de Azul Jedi a Rojo Sith).
 
 <div align="center">
-  <img src="readme_media/shaders2d/03_sable_full.gif" alt="Sable versión completa" width="480" />
-  &nbsp;&nbsp;
-  <img src="readme_media/shaders2d/03_sable_tiny.gif" alt="Sable versión Tiny Code" width="480" />
+  <a href="./readme_media/shaders2d/03_sable_full.gif">
+    <img src="./readme_media/shaders2d/03_sable_full.gif" alt="Sable versión completa" width="480" />
+  </a>
   <br>
-  <sub><b>Izquierda:</b> Versión comentada &nbsp;|&nbsp; <b>Derecha:</b> Versión <i>Tiny Code</i> (511 bytes)</sub>
+  <sub><a href="./readme_media/shaders2d/03_sable_full.gif">Ver o descargar GIF original</a> · <a href="./shaders_2d/03_sable_comentado.frag">Ver código GLSL comentado</a></sub>
+</div>
+
+#### Versión *Tiny Code* Interactiva — 511 bytes ([`03_sable_tiny.frag`](./shaders_2d/03_sable_tiny.frag))
+Primera versión comprimida que mantiene el control por ratón (`u_mouse`), el balanceo pendular, la empuñadura con bandas y el doble resplandor exponencial de la hoja en 511 bytes.
+
+<div align="center">
+  <a href="./readme_media/shaders2d/03_sable_tiny.gif">
+    <img src="./readme_media/shaders2d/03_sable_tiny.gif" alt="Sable versión Tiny Code" width="480" />
+  </a>
+  <br>
+  <sub><a href="./readme_media/shaders2d/03_sable_tiny.gif">Ver o descargar GIF original</a> · <a href="./shaders_2d/03_sable_tiny.frag">Ver código Tiny Code (511 B)</a></sub>
+</div>
+
+#### Versión *Tiny Code* Autónoma (Sin Ratón) — 510 bytes ([`03_sable_tiny_version2.frag`](./shaders_2d/03_sable_tiny_version2.frag))
+Como ampliación solicitada tras la revisión en clase, se creó esta segunda versión *Tiny Code* prescindiendo de `u_mouse`. Los bytes ahorrados al quitar el ratón se aprovecharon para que el sable cambie de color automáticamente con `u_time` (recorriendo azul, verde, morado y rojo) y para añadir reflejos del láser sobre el metal de la empuñadura.
+
+<div align="center">
+  <a href="./readme_media/shaders2d/03_sable_tiny_version2.gif">
+    <img src="./readme_media/shaders2d/03_sable_tiny_version2.gif" alt="Sable versión Tiny Code Autónoma" width="480" />
+  </a>
+  <br>
+  <sub><a href="./readme_media/shaders2d/03_sable_tiny_version2.gif">Ver o descargar GIF original</a> · <a href="./shaders_2d/03_sable_tiny_version2.frag">Ver código Tiny Code v2 (510 B)</a></sub>
 </div>
 
 ---
 
 ### 2.5. Técnicas de Compresión (*Tiny Code*)
 
-Para mantener los tres archivos `_tiny.frag` por debajo del límite de **512 bytes**:
-1. **Limpieza léxica:** Eliminación de comentarios, saltos de línea y espacios prescindibles, agrupando declaraciones (`uniform vec2 u_resolution,u_mouse;`).
-2. **Literales abreviados:** Supresión de ceros innecesarios en coma flotante (`.5` en lugar de `0.5`, `1.` en lugar de `1.0`).
-3. **Identificadores monoletra e *inlining*:** Variables y funciones de un carácter (`p`, `d`, `f`, `h()`, `n()`, `b()`) e integración directa de expresiones en `main()`.
+Para lograr que todos los archivos `_tiny` ocupen **$\le$ 512 bytes**:
+1. **Limpieza de formato:** Eliminación de comentarios, saltos de línea y espacios innecesarios.
+2. **Números abreviados:** Uso de `.5` en lugar de `0.5` o `1.` en lugar de `1.0`.
+3. **Nombres cortos y macros:** Variables de una sola letra (`p`, `d`, `c`) y uso de `#define` (como `#define L length(...)`) para evitar repetir expresiones largas.
 
 ---
 
 ## 3. Parte II: Integración de Shaders 3D en el Sistema Galáctico Star Wars
 
-En [`src/shaders/planetShaders.js`](./src/shaders/planetShaders.js) se han implementado cuatro materiales GLSL personalizados conectados a un *uniform* temporal compartido (`sharedShaderUniforms.u_time`). Todos los shaders planetarios evalúan el ruido FBM de 5 octavas sobre el **vector de posición 3D normalizado (`normalize(position)`)**, eliminando por completo las costuras UV y la distorsión en los polos.
+En [`src/shaders/planetShaders.js`](./src/shaders/planetShaders.js) se han creado cuatro materiales GLSL personalizados conectados al tiempo de la escena (`sharedShaderUniforms.u_time`). Todos calculan el ruido directamente sobre la superficie 3D de la esfera (`normalize(position)`), evitando costuras verticales o deformaciones en los polos.
 
-| Astro / Elemento | Demostración Visual | Implementación Técnica en GLSL (Vertex & Fragment Shader) |
+| Astro / Elemento | Demostración Visual | Funcionamiento del Shader (Vertex & Fragment) |
 | :--- | :---: | :--- |
-| **Sol Central**<br>*(Plasma y Corona Fresnel)* | <img src="readme_media/shaders3d/01_sol_shader.gif" width="480" /> | • **Vertex Shader:** Pulsación radial suave acoplada a `u_time` sobre la normal de cada vértice.<br>• **Fragment Shader:** Doble pasada de FBM 3D en 5 octavas (*warping* convectivo) combinada con un **efecto Fresnel** (`pow(1.0 - max(dot(n, viewDir), 0.0), 2.2)`) que intensifica la corona solar dorada en los bordes de la esfera. |
-| **Planeta Mustafar**<br>*(Domain Warping 3D)* | <img src="readme_media/shaders3d/02_mustafar_shader.gif" width="480" /> | • **Domain Warping 3D:** Desplaza el dominio espacial mediante un campo vectorial tridimensional $\mathbf{q}$ animado con `u_time` para generar ríos de lava fluida sin costuras.<br>• **Iluminación Híbrida:** La corteza volcánica oscura responde a la luz direccional del Sol central (`dot(n, luzDir)`), mientras que el magma actúa como **superficie emisiva** brillante en el hemisferio nocturno, rematada por una atmósfera ígnea Fresnel. |
-| **Planeta Hoth**<br>*(Relieve 3D y Normales)* | <img src="readme_media/shaders3d/03_hoth_shader.gif" width="480" /> | • **Desplazamiento Geométrico:** El *Vertex Shader* deforma la geometría real de la esfera (`SphereGeometry` $64 \times 64$) desplazando los vértices según el relieve FBM.<br>• **Normales por Diferencias Finitas:** El *Fragment Shader* calcula el gradiente 3D $\nabla h$ del terreno glaciar para perturbar la normal por píxel (`nEsculpida`), produciendo sombras escarpadas, brillo especular sobre el hielo y un halo atmosférico cian. |
-| **Estrella de la Muerte**<br>*(Escudo Deflector)* | <img src="readme_media/shaders3d/04_escudo_shader.gif" width="480" /> | • **Renderizado Aditivo:** Esfera envolvente (`AdditiveBlending`, `depthWrite: false`) vinculada a la estación espacial en el Episodio IV.<br>• **Rejilla y Fresnel:** Combina un patrón reticular UV, ondas de escaneo sinusoidales y opacidad dependiente del ángulo de visión para que el escudo sea transparente en el centro y brillante en el contorno. |
+| **Sol Central**<br>*(Plasma y Corona)* | <a href="./readme_media/shaders3d/01_sol_shader.gif"><img src="./readme_media/shaders3d/01_sol_shader.gif" width="480" /></a><br><sub><a href="./readme_media/shaders3d/01_sol_shader.gif">Ver o descargar GIF</a></sub> | • **Vertex Shader:** Produce una pulsación suave en el radio de la estrella.<br>• **Fragment Shader:** Simula la ebullición del plasma solar mediante ruido fractal 3D y añade un brillo dorado intenso en los bordes (*efecto Fresnel*). |
+| **Planeta Mustafar**<br>*(Lava en Movimiento)* | <a href="./readme_media/shaders3d/02_mustafar_shader.gif"><img src="./readme_media/shaders3d/02_mustafar_shader.gif" width="480" /></a><br><sub><a href="./readme_media/shaders3d/02_mustafar_shader.gif">Ver o descargar GIF</a></sub> | • **Fluidez del Magma:** Distorsiona las coordenadas 3D con el tiempo (*Domain Warping*) para que los ríos de lava fluyan de forma continua.<br>• **Luz y Emisión:** La roca oscura recibe luz del Sol central, mientras que las grietas de lava brillan con luz propia incluso en la cara nocturna. |
+| **Planeta Hoth**<br>*(Relieve y Hielo)* | <a href="./readme_media/shaders3d/03_hoth_shader.gif"><img src="./readme_media/shaders3d/03_hoth_shader.gif" width="480" /></a><br><sub><a href="./readme_media/shaders3d/03_hoth_shader.gif">Ver o descargar GIF</a></sub> | • **Deformación 3D:** El *Vertex Shader* levanta las montañas y valles reales sobre la malla de la esfera.<br>• **Sombreado Glaciar:** El *Fragment Shader* recalcula la inclinación del terreno por píxel para proyectar sombras en las cordilleras y destellos sobre el hielo. |
+| **Estrella de la Muerte**<br>*(Escudo Deflector)* | <a href="./readme_media/shaders3d/04_escudo_shader.gif"><img src="./readme_media/shaders3d/04_escudo_shader.gif" width="480" /></a><br><sub><a href="./readme_media/shaders3d/04_escudo_shader.gif">Ver o descargar GIF</a></sub> | • **Transparencia Aditiva:** Esfera semitransparente que envuelve la estación espacial.<br>• **Rejilla Energética:** Combina una cuadrícula luminosa, ondas de escaneo descendentes y transparencia en el centro para resaltar el contorno del campo de fuerza. |
 
 ---
 
@@ -131,30 +181,33 @@ En [`src/shaders/planetShaders.js`](./src/shaders/planetShaders.js) se han imple
 
 ### 4.1. Estructura de Módulos
 
-<pre><b>IG_S9_Shaders/</b>
-├── <a href="./shaders_2d/">shaders_2d/</a>                       # Shaders 2D (versiones comentadas y Tiny Code <= 512 B)
+<pre><b>IG_S9-10/</b>
+├── <a href="./shaders_2d/">shaders_2d/</a>                            # Shaders 2D (comentados y Tiny Code <= 512 B)
 │   ├── <a href="./shaders_2d/01_llama_comentado.frag">01_llama_comentado.frag</a> / <a href="./shaders_2d/01_llama_tiny.frag">01_llama_tiny.frag</a>
 │   ├── <a href="./shaders_2d/02_fuego_fbm_comentado.frag">02_fuego_fbm_comentado.frag</a> / <a href="./shaders_2d/02_fuego_fbm_tiny.frag">02_fuego_fbm_tiny.frag</a>
-│   └── <a href="./shaders_2d/03_sable_comentado.frag">03_sable_comentado.frag</a> / <a href="./shaders_2d/03_sable_tiny.frag">03_sable_tiny.frag</a>
-├── <a href="./3D_models/">3D_models/</a>                        # Modelos .glb (Estrella de la Muerte, X-Wing, R2-D2)
-├── <a href="./readme_media/">readme_media/</a>                     # Recursos gráficos y GIFs demostrativos
-├── <a href="./src/">src/</a>                          # Código fuente de la aplicación
-│   ├── <a href="./src/shaders/planetShaders.js">shaders/planetShaders.js</a>      # Shaders 3D GLSL (Sol, Mustafar, Hoth y Escudo)
-│   ├── <a href="./src/modules/planetBuilder.js">modules/planetBuilder.js</a>      # Asignación de ShaderMaterial a los astros
-│   ├── <a href="./src/modules/deathStar.js">modules/deathStar.js</a>          # Gestión de la estación y escudo deflector
-│   └── <a href="./src/main.js">main.js</a>                       # Bucle principal y actualización de u_time
-└── <a href="./README.md">README.md</a>                         # Documentación técnica de la práctica
+│   └── <a href="./shaders_2d/03_sable_comentado.frag">03_sable_comentado.frag</a> / <a href="./shaders_2d/03_sable_tiny.frag">03_sable_tiny.frag</a> / <a href="./shaders_2d/03_sable_tiny_version2.frag">03_sable_tiny_version2.frag</a>
+├── <a href="./3D_models/">3D_models/</a>                             # Modelos .glb (Estrella de la Muerte, X-Wing, R2-D2)
+├── <a href="./readme_media/">readme_media/</a>                          # Recursos gráficos y GIFs demostrativos
+├── <a href="./src/">src/</a>                               # Código fuente de la aplicación
+│   ├── <a href="./src/shaders/planetShaders.js">shaders/planetShaders.js</a>           # Shaders 3D GLSL (Sol, Mustafar, Hoth y Escudo)
+│   ├── <a href="./src/modules/planetBuilder.js">modules/planetBuilder.js</a>           # Asignación de ShaderMaterial a los astros
+│   ├── <a href="./src/modules/deathStar.js">modules/deathStar.js</a>               # Gestión de la estación y escudo deflector
+│   └── <a href="./src/main.js">main.js</a>                            # Bucle principal y actualización de u_time
+└── <a href="./README.md">README.md</a>                              # Documentación de la práctica
 </pre>
 
 ### 4.2. Correspondencia con los Scripts de Clase (Semana 9)
 
-| Scripts (`otsedom`) | Concepto de Programación GPU | Aplicación en el Proyecto |
+- **Entorno CodeSandbox del Proyecto:** [Probar Proyecto en Sandbox](https://codesandbox.io/p/sandbox/github/studies-ulpgc/IG_S9-10)
+- **CodeSandbox Semana 9 ([`otsedom`](https://github.com/otsedom)):** [ig-s9-j9q2h4](https://codesandbox.io/p/sandbox/ig-s9-j9q2h4)
+
+| Scripts ([`otsedom`](https://github.com/otsedom)) | Concepto Base | Aplicación en el Proyecto |
 | :--- | :--- | :--- |
-| **`script_31` – `script_32`** | Estructura GLSL, *uniforms* (`u_time`, `u_resolution`, `u_mouse`) y *swizzling*. | Base de los 3 shaders 2D en [`shaders_2d/`](./shaders_2d/) y de `sharedShaderUniforms`. |
-| **`script_33` – `script_34`** | `THREE.ShaderMaterial` y variables `varying` entre *Vertex* y *Fragment Shader*. | Implementado en [`planetShaders.js`](./src/shaders/planetShaders.js) (`vPos`, `vNormalW`, `vWorldPos`). |
-| **`script_35` – `script_36`** | *Shaping functions* (`smoothstep`, `mix`, `clamp`) y patrones procedurales. | Mapeo térmico de llamas, haz del sable láser y rejilla del escudo. |
-| **`script_37` – `script_38`** | *Value Noise*, *Fractal Brownian Motion* (FBM) y *Domain Warping*. | Fuego 2D FBM y superficie convectiva del Sol y Mustafar. |
-| **`script_39` – `script_40`** | *Vertex displacement*, normales por diferencias finitas e iluminación difusa/especular. | Relieve montañoso e iluminación glaciar en el planeta **Hoth**. |
+| **[`script_31` – `script_32`](https://codesandbox.io/p/sandbox/ig-s9-j9q2h4)** | Estructura GLSL, *uniforms* (`u_time`, `u_resolution`, `u_mouse`) y manejo de vectores. | Base de los shaders 2D en [`shaders_2d/`](./shaders_2d/) y de `sharedShaderUniforms`. |
+| **[`script_33` – `script_34`](https://codesandbox.io/p/sandbox/ig-s9-j9q2h4)** | `THREE.ShaderMaterial` y paso de datos `varying` entre *Vertex* y *Fragment Shader*. | Implementado en [`planetShaders.js`](./src/shaders/planetShaders.js) (`vPos`, `vNormalW`, `vWorldPos`). |
+| **[`script_35` – `script_36`](https://codesandbox.io/p/sandbox/ig-s9-j9q2h4)** | Funciones de suavizado (`smoothstep`, `mix`, `clamp`) y patrones geométricos. | Degradados de llamas, haz del sable láser y rejilla del escudo deflector. |
+| **[`script_37` – `script_38`](https://codesandbox.io/p/sandbox/ig-s9-j9q2h4)** | Ruido procedural (*Value Noise*), FBM y distorsión de dominio. | Fuego 2D FBM y superficie fluida del Sol y Mustafar. |
+| **[`script_39` – `script_40`](https://codesandbox.io/p/sandbox/ig-s9-j9q2h4)** | Deformación de vértices, cálculo de normales e iluminación difusa/especular. | Relieve montañoso e iluminación glaciar en el planeta **Hoth**. |
 
 ---
 
@@ -165,14 +218,16 @@ En [`src/shaders/planetShaders.js`](./src/shaders/planetShaders.js) se han imple
 1. **The Book of Shaders (Patricio Gonzalez Vivo & Jen Lowe):** [https://thebookofshaders.com/](https://thebookofshaders.com/)
 2. **Artículos de Iñigo Quilez (*Domain Warping* y *2D SDFs*):** [https://iquilezles.org/articles/](https://iquilezles.org/articles/)
 3. **Documentación Oficial de Three.js (`ShaderMaterial`):** [https://threejs.org/docs/#api/en/materials/ShaderMaterial](https://threejs.org/docs/#api/en/materials/ShaderMaterial)
-4. **Repositorios del Profesor Modesto Castrillón (`otsedom`):** [https://github.com/otsedom](https://github.com/otsedom)
+4. **Repositorios y Sandbox del Profesor Modesto Castrillón ([`otsedom`](https://github.com/otsedom)):**
+   - GitHub: [https://github.com/otsedom](https://github.com/otsedom)
+   - CodeSandbox Semana 9: [ig-s9-j9q2h4](https://codesandbox.io/p/sandbox/ig-s9-j9q2h4)
 
 ### 5.2. Declaración de Asistencia con Herramientas de Inteligencia Artificial
 
-Durante el desarrollo se utilizó **Google Gemini** como asistente técnico para:
-- Depuración de expresiones matemáticas en GLSL ES 1.00 / WebGL y resolución de costuras en coordenadas esféricas 3D.
-- Optimización sintáctica para ajustar los *fragment shaders* 2D al límite estricto de $\le$ 512 bytes (*Tiny Code*).
-- Maquetación y síntesis de la documentación técnica en Markdown.
+Se detallan ejemplos del uso de modelos de IA (**Google Gemini**) como asistente de soporte técnico durante la práctica:
+
+- **Desarrollo de shaders 2D (*Tiny Code*) y shaders planetarios 3D en GLSL:** [Consulta sobre shaders GLSL y optimización de bytes](<!-- PEGA AQUÍ EL ENLACE DE TU CONVERSACIÓN DE GEMINI -->)
+- **Asistencia técnica:** Depuración de expresiones matemáticas en WebGL/GLSL, resolución de costuras en esferas 3D y maquetación de la documentación.
 
 ### 5.3. Autora
 

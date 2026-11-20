@@ -1,0 +1,2 @@
+#define L length(p-vec2(0,clamp(p.y,
+precision lowp float;uniform vec2 u_resolution;uniform float u_time;void main(){vec2 p=(gl_FragCoord.xy*2.-u_resolution)/u_resolution.y;p*=mat2(cos((sin(u_time)-.1*sin(3.*u_time))*.4+vec4(0,1.571,-1.571,0)));p.y+=.3;float d=L 0.,1.1)));vec3 c=clamp(cos(u_time*.7+vec3(4,2,0))*.7+.5,0.,1.);gl_FragColor=vec4(mix(c*(exp(-d*5.)*.4+exp(-d*12.)*1.2)+smoothstep(.02,.007,d),(.6-abs(p.x)*13.)*(1.-.5*step(.4,fract(p.y*9.)))+c*smoothstep(-.15,0.,p.y)*.4,step(L-.3,0.))),.03)),1);}
