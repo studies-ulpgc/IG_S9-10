@@ -64,13 +64,12 @@ Todos los *shaders* utilizan los *uniforms* estándar `u_resolution`, `u_time` y
 - **Fidelidad tras compresión:** La versión *Tiny Code* (510 B) conserva el 100 % de la geometría, animación e interactividad vertical de la versión completa.
 
 <div align="center">
-  <img src="readme_media/shaders2d/01_llama_full.gif" alt="Llama versión completa" width="240" />
+  <img src="./readme_media/shaders2d/01_llama_full.gif" alt="Llama versión completa" width="240" />
   &nbsp;&nbsp;
-  <img src="readme_media/shaders2d/01_llama_tiny.gif" alt="Llama versión Tiny Code" width="240" />
+  <img src="./readme_media/shaders2d/01_llama_tiny.gif" alt="Llama versión Tiny Code" width="240" />
   <br>
   <sub><b>Izquierda:</b> Versión comentada &nbsp;|&nbsp; <b>Derecha:</b> Versión <i>Tiny Code</i> (510 bytes)</sub>
 </div>
-
 
 ---
 
