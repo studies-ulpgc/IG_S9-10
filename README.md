@@ -64,9 +64,9 @@ Todos los *shaders* utilizan los *uniforms* estándar `u_resolution`, `u_time` y
 - **Fidelidad tras compresión:** La versión *Tiny Code* (510 B) conserva el 100 % de la geometría, animación e interactividad vertical de la versión completa.
 
 <div align="center">
-  <img src="./readme_media/shaders2d/01_llama_full.gif" alt="Llama versión completa" width="240" />
+  <img src="./readme_media/shaders2d/01_llama_full.gif" alt="Llama versión completa" width="480" />
   &nbsp;&nbsp;
-  <img src="./readme_media/shaders2d/01_llama_tiny.gif" alt="Llama versión Tiny Code" width="240" />
+  <img src="./readme_media/shaders2d/01_llama_tiny.gif" alt="Llama versión Tiny Code" width="480" />
   <br>
   <sub><b>Izquierda:</b> Versión comentada &nbsp;|&nbsp; <b>Derecha:</b> Versión <i>Tiny Code</i> (510 bytes)</sub>
 </div>
@@ -80,9 +80,9 @@ Todos los *shaders* utilizan los *uniforms* estándar `u_resolution`, `u_time` y
 - **Fidelidad tras compresión:** Al compactar la función FBM y la paleta exponencial (`pow(fuego, 2.2)` y `pow(fuego, 4.5)`), el resultado en **507 bytes** es visualmente indistinguible del código original.
 
 <div align="center">
-  <img src="readme_media/shaders2d/02_fuego_full.gif" alt="Fuego FBM versión completa" width="240" />
+  <img src="readme_media/shaders2d/02_fuego_full.gif" alt="Fuego FBM versión completa" width="480" />
   &nbsp;&nbsp;
-  <img src="readme_media/shaders2d/02_fuego_tiny.gif" alt="Fuego FBM versión Tiny Code" width="240" />
+  <img src="readme_media/shaders2d/02_fuego_tiny.gif" alt="Fuego FBM versión Tiny Code" width="480" />
   <br>
   <sub><b>Izquierda:</b> Versión comentada &nbsp;|&nbsp; <b>Derecha:</b> Versión <i>Tiny Code</i> (507 bytes)</sub>
 </div>
@@ -96,9 +96,9 @@ Todos los *shaders* utilizan los *uniforms* estándar `u_resolution`, `u_time` y
 - **Fidelidad tras compresión:** Mantiene intactos tanto el núcleo blanco incandescente como el halo cromático y la rotación en **511 bytes**.
 
 <div align="center">
-  <img src="readme_media/shaders2d/03_sable_full.gif" alt="Sable versión completa" width="240" />
+  <img src="readme_media/shaders2d/03_sable_full.gif" alt="Sable versión completa" width="480" />
   &nbsp;&nbsp;
-  <img src="readme_media/shaders2d/03_sable_tiny.gif" alt="Sable versión Tiny Code" width="240" />
+  <img src="readme_media/shaders2d/03_sable_tiny.gif" alt="Sable versión Tiny Code" width="480" />
   <br>
   <sub><b>Izquierda:</b> Versión comentada &nbsp;|&nbsp; <b>Derecha:</b> Versión <i>Tiny Code</i> (511 bytes)</sub>
 </div>
@@ -120,10 +120,10 @@ En [`src/shaders/planetShaders.js`](./src/shaders/planetShaders.js) se han imple
 
 | Astro / Elemento | Demostración Visual | Implementación Técnica en GLSL (Vertex & Fragment Shader) |
 | :--- | :---: | :--- |
-| **Sol Central**<br>*(Plasma y Corona Fresnel)* | <img src="readme_media/shaders3d/01_sol_shader.gif" width="240" /> | • **Vertex Shader:** Pulsación radial suave acoplada a `u_time` sobre la normal de cada vértice.<br>• **Fragment Shader:** Doble pasada de FBM 3D en 5 octavas (*warping* convectivo) combinada con un **efecto Fresnel** (`pow(1.0 - max(dot(n, viewDir), 0.0), 2.2)`) que intensifica la corona solar dorada en los bordes de la esfera. |
-| **Planeta Mustafar**<br>*(Domain Warping 3D)* | <img src="readme_media/shaders3d/02_mustafar_shader.gif" width="240" /> | • **Domain Warping 3D:** Desplaza el dominio espacial mediante un campo vectorial tridimensional $\mathbf{q}$ animado con `u_time` para generar ríos de lava fluida sin costuras.<br>• **Iluminación Híbrida:** La corteza volcánica oscura responde a la luz direccional del Sol central (`dot(n, luzDir)`), mientras que el magma actúa como **superficie emisiva** brillante en el hemisferio nocturno, rematada por una atmósfera ígnea Fresnel. |
-| **Planeta Hoth**<br>*(Relieve 3D y Normales)* | <img src="readme_media/shaders3d/03_hoth_shader.gif" width="240" /> | • **Desplazamiento Geométrico:** El *Vertex Shader* deforma la geometría real de la esfera (`SphereGeometry` $64 \times 64$) desplazando los vértices según el relieve FBM.<br>• **Normales por Diferencias Finitas:** El *Fragment Shader* calcula el gradiente 3D $\nabla h$ del terreno glaciar para perturbar la normal por píxel (`nEsculpida`), produciendo sombras escarpadas, brillo especular sobre el hielo y un halo atmosférico cian. |
-| **Estrella de la Muerte**<br>*(Escudo Deflector)* | <img src="readme_media/shaders3d/04_escudo_shader.gif" width="240" /> | • **Renderizado Aditivo:** Esfera envolvente (`AdditiveBlending`, `depthWrite: false`) vinculada a la estación espacial en el Episodio IV.<br>• **Rejilla y Fresnel:** Combina un patrón reticular UV, ondas de escaneo sinusoidales y opacidad dependiente del ángulo de visión para que el escudo sea transparente en el centro y brillante en el contorno. |
+| **Sol Central**<br>*(Plasma y Corona Fresnel)* | <img src="readme_media/shaders3d/01_sol_shader.gif" width="480" /> | • **Vertex Shader:** Pulsación radial suave acoplada a `u_time` sobre la normal de cada vértice.<br>• **Fragment Shader:** Doble pasada de FBM 3D en 5 octavas (*warping* convectivo) combinada con un **efecto Fresnel** (`pow(1.0 - max(dot(n, viewDir), 0.0), 2.2)`) que intensifica la corona solar dorada en los bordes de la esfera. |
+| **Planeta Mustafar**<br>*(Domain Warping 3D)* | <img src="readme_media/shaders3d/02_mustafar_shader.gif" width="480" /> | • **Domain Warping 3D:** Desplaza el dominio espacial mediante un campo vectorial tridimensional $\mathbf{q}$ animado con `u_time` para generar ríos de lava fluida sin costuras.<br>• **Iluminación Híbrida:** La corteza volcánica oscura responde a la luz direccional del Sol central (`dot(n, luzDir)`), mientras que el magma actúa como **superficie emisiva** brillante en el hemisferio nocturno, rematada por una atmósfera ígnea Fresnel. |
+| **Planeta Hoth**<br>*(Relieve 3D y Normales)* | <img src="readme_media/shaders3d/03_hoth_shader.gif" width="480" /> | • **Desplazamiento Geométrico:** El *Vertex Shader* deforma la geometría real de la esfera (`SphereGeometry` $64 \times 64$) desplazando los vértices según el relieve FBM.<br>• **Normales por Diferencias Finitas:** El *Fragment Shader* calcula el gradiente 3D $\nabla h$ del terreno glaciar para perturbar la normal por píxel (`nEsculpida`), produciendo sombras escarpadas, brillo especular sobre el hielo y un halo atmosférico cian. |
+| **Estrella de la Muerte**<br>*(Escudo Deflector)* | <img src="readme_media/shaders3d/04_escudo_shader.gif" width="480" /> | • **Renderizado Aditivo:** Esfera envolvente (`AdditiveBlending`, `depthWrite: false`) vinculada a la estación espacial en el Episodio IV.<br>• **Rejilla y Fresnel:** Combina un patrón reticular UV, ondas de escaneo sinusoidales y opacidad dependiente del ángulo de visión para que el escudo sea transparente en el centro y brillante en el contorno. |
 
 ---
 
